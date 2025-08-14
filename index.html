@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video</title>
+  <style>
+    html, body { height: 100%; margin: 0; background: #000; }
+    video { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: contain; background: #000; }
+    #unmute {
+      position: absolute; left: 50%; bottom: 5%; transform: translateX(-50%);
+      padding: 0.8rem 1.1rem; border-radius: 999px; border: 2px solid #fff;
+      background: rgba(0,0,0,0.5); color: #fff; font-weight: 600; text-decoration: none;
+      display: none;
+    }
+    #hint {
+      position: absolute; left: 50%; top: 5%; transform: translateX(-50%);
+      color: #fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans';
+      opacity: .8; font-size: .95rem; text-align: center; display: none;
+    }
+  </style>
+</head>
+<body>
+  <video id="player" autoplay muted playsinline controls preload="auto">
+    <source src="vlipsy-creepy-face-jump-scare-3hEsFXt9.mp4" type="video/mp4" />
+    Dein Browser kann dieses Video nicht abspielen.
+  </video>
+  <a id="unmute" href="#">🔊 Tippe/Klicke für Ton</a>
+  <div id="hint">Ton wurde möglicherweise blockiert. Aktiviere ihn über den Button.</div>
+
+  <script>
+    const v = document.getElementById('player');
+    const unmuteBtn = document.getElementById('unmute');
+    const hint = document.getElementById('hint');
+
+    async function tryPlayWithSound() {
+      try {
+        v.muted = false;
+        await v.play();
+      } catch (e) {
+        v.muted = true;
+        try { await v.play(); } catch (e2) {}
+        unmuteBtn.style.display = 'inline-block';
+        hint.style.display = 'block';
+      }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      tryPlayWithSound();
+    } else {
+      document.addEventListener('DOMContentLoaded', tryPlayWithSound);
+    }
+
+    async function unmute() {
+      try {
+        v.muted = false;
+        await v.play();
+        unmuteBtn.style.display = 'none';
+        hint.style.display = 'none';
+      } catch (e) {}
+    }
+    unmuteBtn.addEventListener('click', function(e){ e.preventDefault(); unmute(); });
+    document.addEventListener('touchstart', () => { if (v.muted) unmute(); }, { once: true });
+    document.addEventListener('click', () => { if (v.muted) unmute(); }, { once: true });
+    document.addEventListener('keydown', () => { if (v.muted) unmute(); }, { once: true });
+  </script>
+</body>
+</html>
